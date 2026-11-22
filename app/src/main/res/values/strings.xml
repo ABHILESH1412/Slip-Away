@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Slip Away</string>
+    <!-- Shown by the system in "Calling accounts" and possibly on the call screen. Keep it boring. -->
+    <string name="call_account_label">Phone</string>
+    <string name="tile_label">Slip Away</string>
+    <string name="shortcut_10s">Call in 10 s</string>
+    <string name="shortcut_1m">Call in 1 min</string>
+    <string name="shortcut_3m">Call in 3 min</string>
+</resources>

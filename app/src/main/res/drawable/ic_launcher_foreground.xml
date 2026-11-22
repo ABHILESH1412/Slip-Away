@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- A door with an arrow walking out of it. Kept inside the 66dp safe zone of the 108dp canvas. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:pathData="M58,40 L58,32 L36,32 L36,76 L58,76 L58,68"
+        android:strokeWidth="5"
+        android:strokeColor="#FFF3EDE2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    <path
+        android:pathData="M48,54 L78,54 M70,46 L78,54 L70,62"
+        android:strokeWidth="5"
+        android:strokeColor="#FFF2B66D"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press the app icon to get these. targetPackage must match applicationId. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="ring_10s"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_10s">
+        <intent
+            android:action="dev.slipaway.action.RING"
+            android:targetClass="dev.slipaway.TriggerActivity"
+            android:targetPackage="io.github.abhilesh1412.slipaway">
+            <extra android:name="delay_seconds" android:value="10" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="ring_1m"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_1m">
+        <intent
+            android:action="dev.slipaway.action.RING"
+            android:targetClass="dev.slipaway.TriggerActivity"
+            android:targetPackage="io.github.abhilesh1412.slipaway">
+            <extra android:name="delay_seconds" android:value="60" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:shortcutId="ring_3m"
+        android:icon="@mipmap/ic_launcher"
+        android:shortcutShortLabel="@string/shortcut_3m">
+        <intent
+            android:action="dev.slipaway.action.RING"
+            android:targetClass="dev.slipaway.TriggerActivity"
+            android:targetPackage="io.github.abhilesh1412.slipaway">
+            <extra android:name="delay_seconds" android:value="180" />
+        </intent>
+    </shortcut>
+</shortcuts>
