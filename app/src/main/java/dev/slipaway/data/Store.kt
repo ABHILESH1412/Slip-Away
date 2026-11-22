@@ -248,10 +248,22 @@ class Store private constructor(context: Context) {
         fun get(context: Context): Store =
             instance ?: synchronized(this) { instance ?: Store(context).also { instance = it } }
 
+        /** Longest delay the Custom option allows: one hour. */
+        const val MAX_CUSTOM_DELAY = 60 * 60
+
+        /** Shorter form for tight spaces like the widget: "10 s", "3 min", "2:30". */
+        fun formatDelayShort(seconds: Int): String = when {
+            seconds <= 0 -> "Now"
+            seconds < 60 -> "$seconds s"
+            seconds % 60 == 0 -> "${seconds / 60} min"
+            else -> "%d:%02d".format(seconds / 60, seconds % 60)
+        }
+
         fun formatDelay(seconds: Int): String = when {
             seconds <= 0 -> "Now"
             seconds < 60 -> "$seconds s"
-            else -> "${seconds / 60} min"
+            seconds % 60 == 0 -> "${seconds / 60} min"
+            else -> "${seconds / 60} min ${seconds % 60} s"
         }
 
         private inline fun <reified T : Enum<T>> enumOr(name: String?, fallback: T): T =

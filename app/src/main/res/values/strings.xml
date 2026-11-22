@@ -9,4 +9,8 @@
     <string name="shortcut_10s">Call in 10 s</string>
     <string name="shortcut_1m">Call in 1 min</string>
     <string name="shortcut_3m">Call in 3 min</string>
+    <string name="widget_label">Slip Away</string>
+    <string name="widget_description">Tap to get a call after your last chosen delay</string>
+    <string name="widget_preview_title">Ring in 30 s</string>
+    <string name="widget_preview_subtitle">Mom</string>
 </resources>

@@ -19,6 +19,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.slipaway.data.Store
+import dev.slipaway.widget.RingWidget
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 
 /** The app's screens. Kept as plain strings so the back stack survives rotation. */
 sealed interface Screen {
@@ -69,6 +72,12 @@ class Navigator(private val stack: MutableList<Screen>) {
 @Composable
 fun SlipAwayApp(store: Store) {
     val settings by store.settings.collectAsStateWithLifecycle()
+
+    // Keep the home-screen widget showing the current delay and caller.
+    val context = LocalContext.current
+    val selectedId by store.selectedId.collectAsStateWithLifecycle()
+    val callers by store.callers.collectAsStateWithLifecycle()
+    LaunchedEffect(settings.delaySeconds, selectedId, callers) { RingWidget.updateAll(context) }
 
     if (!settings.onboardingDone) {
         SetupScreen(store)

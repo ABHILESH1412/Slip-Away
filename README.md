@@ -30,8 +30,8 @@ Most fake-call apps draw their own copy of a call screen. It never quite matches
 - **Your phone's real call screen:** the system dialer shows everything: ringing, Answer/Decline, in-call timer, Mute, Speaker, hang-up.
 - **Saved callers:** keep several ("Mom", "Flatmate", "Boss"), each with their own number and lines, and switch with one tap. A saved contact shows their own name and photo.
 - **A voice on the line:** after you answer, a voice reads lines you write, with pauses for your replies, or plays a recording you choose. It plays quietly through the earpiece, so it sounds like a real conversation to people nearby. You can set the speed, pitch and pauses, and preview it.
-- **Ring on a timer:** now, or in 10 s, 30 s, 1, 3, 5 or 10 minutes. Set it before you walk in and lock your phone.
-- **Discreet triggers:** a Quick Settings tile, and long-press shortcuts on the app icon.
+- **Ring on a timer:** now, in 10 s, 30 s, 1, 3, 5 or 10 minutes, or any custom time up to an hour. Set it before you walk in and lock your phone.
+- **Discreet triggers:** a home-screen widget, a Quick Settings tile, and long-press shortcuts on the app icon.
 - **Behaves like a real call:** if you don't answer, it becomes a missed call. It follows silent mode and Do Not Disturb, and it appears in your call history.
 - **Light and dark themes:** follows your phone, or pick one. Optionally uses your wallpaper colors (Android 12+), and the icon recolours itself when themed icons are on (Android 13+).
 
@@ -78,13 +78,19 @@ If the **Open calling accounts** button doesn't open anything, look for it yours
 
 **How to allow it:** tap **Allow exact timing** in setup (or **Settings → Setup → Exact timing**), then turn on **Allow setting alarms and reminders**. On some phones it's already allowed, and setup says so.
 
-### 3. Quick Settings tile (optional)
+### 3. Home-screen widget (optional)
+
+**Why:** one tap on your home screen and the call is on its way, using the delay and caller you last picked in the app. While it waits, the widget counts down; tap it again to cancel.
+
+**How:** in Slip Away, go to **Settings → Shortcuts → Home-screen widget → Add** and confirm. Or long-press your home screen, tap **Widgets**, and drag **Slip Away** out. It's two cells wide; resize it down to one cell for just the call button. It follows your phone's light or dark mode.
+
+### 4. Quick Settings tile (optional)
 
 **Why:** the fastest way to start a call. Swipe down, tap once, and it rings after your chosen delay.
 
 **How:** in Slip Away, go to **Settings → Shortcuts → Quick Settings tile → Add** (Android 13+). On older versions, swipe down twice, tap the pencil/edit button, and drag **Slip Away** into your tiles.
 
-### 4. Things Slip Away doesn't need
+### 5. Things Slip Away doesn't need
 
 - **Contacts permission:** not needed. The contact picker shares only the one number you choose.
 - **Storage permission:** not needed. The file picker shares only the one recording you choose.
@@ -99,7 +105,7 @@ The "voice reads my lines" option uses your phone's built-in text-to-speech engi
 
 ### The home screen
 
-The home screen shows who will call, a row of delays, and one big **Ring** button. A status line at the top says **Ready · via ⟨account⟩** once setup is done. If it says **Finish setup**, tap it.
+The home screen fills your phone's screen: who will call and the delays at the top, one big **Ring** button in the middle, and what happens after you answer at the bottom. On a small screen it scrolls, so nothing is ever cut off. A status line at the top says **Ready · via ⟨account⟩** once setup is done. If it says **Finish setup**, tap it.
 
 ### Choose who's calling
 
@@ -122,12 +128,13 @@ The sound comes through the **earpiece**, like a real call. If the phone app swi
 
 ### Start a call
 
-Pick a delay under **Ring me in** (**Now**, 10 s, 30 s, 1 min, 3 min, 5 min or 10 min) and tap the big **Ring** button. A countdown ring shows how long is left. You can lock your phone, tap **Cancel**, or tap **Ring now instead**.
+Pick a delay under **Ring me in** and tap the big **Ring** button. The delays sit in one line that scrolls sideways: **Now**, 10 s, 30 s, 1 min, 3 min, 5 min, 10 min, and **Custom**, which lets you type any time in minutes and seconds (up to an hour). The delay you pick is remembered and used by the widget and the Quick Settings tile too. A countdown ring shows how long is left. You can lock your phone, tap **Cancel**, or tap **Ring now instead**.
 
 Other ways to start one without opening the app:
 
 | Trigger | How | Delay used |
 |---|---|---|
+| Home-screen widget | Tap it. It shows a countdown; tap again to cancel. | The delay last chosen in the app |
 | Quick Settings tile | Swipe down, tap **Slip Away**. Tap again to cancel. | The delay last chosen in the app |
 | App shortcuts | Long-press the Slip Away icon: **Call in 10 s**, **1 min** or **3 min**. Drag one to your home screen for a one-tap button. | 10 s / 1 min / 3 min |
 
@@ -144,7 +151,7 @@ It's a normal call to your phone: answer, decline, mute, hold and hang up as usu
 | Call | Ring for | How long it rings before it becomes a missed call (20–90 s) |
 | Call | Calling account name | The "via …" name; empty uses your SIM's name |
 | Voice | Speech speed, Pitch, Pause between lines | How the spoken lines sound; **Preview voice** to hear it |
-| Shortcuts | Quick Settings tile, App icon shortcuts | Add the tile; how to use the shortcuts |
+| Shortcuts | Home-screen widget, Quick Settings tile, App icon shortcuts | Add the widget or tile; how to use the shortcuts |
 | Setup | Calling account, Exact timing | Whether each is done, with a tap to fix it |
 | Setup | Test call, Run setup again | Ring now; repeat the first-run setup |
 | About | Version, Source code, Report a problem, License, Open-source licenses | App info and links |
@@ -228,7 +235,7 @@ Contributions are welcome: bug fixes, support for more phones, translations, new
 ### How it works
 
 ```
-You tap Ring / the tile / a shortcut
+You tap Ring / the widget / the tile / a shortcut
         │
         ▼
 CallTrigger ──(delay?)──► AlarmManager ──► RingReceiver
@@ -261,6 +268,7 @@ The phone's own dialer shows the call  ──► user answers ──► VoicePla
 | `.../call/FakeConnection.kt` | One call: ringing, answer, hold, hang-up, missed-call timeout |
 | `.../call/VoicePlayer.kt` | Spoken lines or a recording, through the earpiece |
 | `.../tile/RingTileService.kt` | Quick Settings tile |
+| `.../widget/RingWidget.kt` | Home-screen widget (layouts in `res/layout/widget_ring*.xml`) |
 | `.../TriggerActivity.kt` | Invisible activity behind the app-icon shortcuts |
 | `.../ui/App.kt` | Screen list, back stack and transitions |
 | `.../ui/SetupScreen.kt` | First-run setup |

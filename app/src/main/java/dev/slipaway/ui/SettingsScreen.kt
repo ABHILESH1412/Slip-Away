@@ -46,6 +46,7 @@ import dev.slipaway.call.CallTrigger
 import dev.slipaway.call.VoicePlayer
 import dev.slipaway.data.Store
 import dev.slipaway.data.ThemeMode
+import dev.slipaway.widget.RingWidget
 import kotlin.math.roundToInt
 
 private enum class Dialog { NONE, THEME, TIMEOUT, ACCOUNT_NAME }
@@ -144,6 +145,17 @@ fun SettingsScreen(store: Store, nav: Navigator) {
 
         SectionHeader("Shortcuts")
         Panel(contentPadding = PaddingValues(0.dp)) {
+            SettingRow(
+                title = "Home-screen widget",
+                summary = "One tap rings after your last chosen delay. Tap again to cancel",
+                onClick = {
+                    if (!RingWidget.requestPin(context)) {
+                        context.toast("Long-press your home screen, tap Widgets, and find Slip Away.")
+                    }
+                },
+                trailing = { Text("Add", color = MaterialTheme.colorScheme.primary) },
+            )
+            Divider()
             SettingRow(
                 title = "Quick Settings tile",
                 summary = if (canRequestTile) {

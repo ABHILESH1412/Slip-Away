@@ -16,6 +16,7 @@ import android.util.Log
 import dev.slipaway.data.Scheduled
 import dev.slipaway.data.Store
 import dev.slipaway.tile.RingTileService
+import dev.slipaway.widget.RingWidget
 
 /** Starts the fake call, now or after a delay. Every trigger (app, tile, shortcut) goes through here. */
 object CallTrigger {
@@ -113,11 +114,13 @@ object CallTrigger {
         PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
     )
 
+    /** Brings the Quick Settings tile and home-screen widgets up to date. */
     private fun refreshTile(context: Context) {
         runCatching {
             TileService.requestListeningState(
                 context, ComponentName(context, RingTileService::class.java),
             )
         }
+        runCatching { RingWidget.updateAll(context) }
     }
 }

@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="window_background">#FFF7F5F0</color>
+    <!-- Home-screen widget. Follows the phone's light or dark mode. -->
+    <color name="widget_surface">#FFF7F5F0</color>
+    <color name="widget_button">#FF1B2340</color>
+    <color name="widget_on_button">#FFFFFFFF</color>
+    <color name="widget_on_surface">#FF1B2340</color>
+    <color name="widget_on_surface_variant">#FF5A6078</color>
 </resources>
