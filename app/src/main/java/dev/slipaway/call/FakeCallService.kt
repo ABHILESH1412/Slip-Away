@@ -8,7 +8,7 @@ import android.telecom.DisconnectCause
 import android.telecom.PhoneAccount
 import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
-import dev.slipaway.Prefs
+import dev.slipaway.data.Store
 
 /**
  * The system binds to this when Slip Away reports an incoming call. It hands back a [FakeConnection];
@@ -20,18 +20,26 @@ class FakeCallService : ConnectionService() {
         account: PhoneAccountHandle?,
         request: ConnectionRequest,
     ): Connection {
-        val prefs = Prefs(this)
-        val connection = FakeConnection(VoicePlayer(applicationContext, prefs))
+        val store = Store.get(this)
+        val callerId = request.extras?.getString(CallTrigger.EXTRA_CALLER_ID)
+        val caller = callerId?.let(store::caller) ?: store.selectedCaller
+        val settings = store.settings.value
+
+        val connection = FakeConnection(
+            voice = VoicePlayer(applicationContext, caller, settings),
+            ringTimeoutMs = settings.ringTimeoutSeconds * 1000L,
+        )
 
         val address = request.address
-            ?: prefs.callerNumber.trim().takeIf { it.isNotEmpty() }
+            ?: caller.number.trim().takeIf { it.isNotEmpty() }
                 ?.let { Uri.fromParts(PhoneAccount.SCHEME_TEL, it, null) }
         if (address != null) {
             connection.setAddress(address, TelecomManager.PRESENTATION_ALLOWED)
         } else {
             connection.setAddress(null, TelecomManager.PRESENTATION_UNKNOWN)
         }
-        prefs.callerName.trim().takeIf { it.isNotEmpty() }?.let {
+        // A saved contact's own name wins on the call screen; this only shows for other numbers.
+        caller.name.trim().takeIf { it.isNotEmpty() }?.let {
             connection.setCallerDisplayName(it, TelecomManager.PRESENTATION_ALLOWED)
         }
 

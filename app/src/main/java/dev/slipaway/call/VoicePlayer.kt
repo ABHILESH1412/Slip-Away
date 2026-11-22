@@ -9,8 +9,9 @@ import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
-import dev.slipaway.Prefs
-import dev.slipaway.VoiceMode
+import dev.slipaway.data.Caller
+import dev.slipaway.data.Settings
+import dev.slipaway.data.VoiceMode
 import java.io.File
 
 /**
@@ -20,11 +21,14 @@ import java.io.File
  * Text-to-speech is turned into audio files first and played from this app, not spoken by the speech
  * engine directly: Android 15+ mutes audio from background apps, and the engine counts as one.
  */
-class VoicePlayer(private val context: Context, prefs: Prefs) {
+class VoicePlayer(private val context: Context, caller: Caller, settings: Settings) {
 
-    private val mode = prefs.voiceMode
-    private val lines = prefs.script.lines().map { it.trim() }.filter { it.isNotEmpty() }
-    private val audioUri = prefs.audioUri?.let(Uri::parse)
+    private val mode = caller.voiceMode
+    private val lines = scriptLines(caller.script)
+    private val audioUri = caller.audioUri?.let(Uri::parse)
+    private val speechRate = settings.speechRate
+    private val speechPitch = settings.speechPitch
+    private val pauseMs = (settings.pauseSeconds * 1000).toLong()
 
     private val handler = Handler(Looper.getMainLooper())
     private val callAudio = AudioAttributes.Builder()
@@ -102,6 +106,8 @@ class VoicePlayer(private val context: Context, prefs: Prefs) {
                 return@TextToSpeech
             }
             val engine = tts ?: return@TextToSpeech
+            engine.setSpeechRate(speechRate)
+            engine.setPitch(speechPitch)
             engine.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                 override fun onStart(utteranceId: String) = Unit
                 override fun onDone(utteranceId: String) {
@@ -137,7 +143,7 @@ class VoicePlayer(private val context: Context, prefs: Prefs) {
         play(Uri.fromFile(lineFile(index))) {
             nextLine = index + 1
             // Gap after each line, as if you were answering.
-            handler.postDelayed({ playNextLine() }, GAP_BETWEEN_LINES_MS)
+            handler.postDelayed({ playNextLine() }, pauseMs)
         }
     }
 
@@ -171,9 +177,10 @@ class VoicePlayer(private val context: Context, prefs: Prefs) {
         }
     }
 
-    private companion object {
-        const val TAG = "SlipAway"
-        const val ANSWER_PAUSE_MS = 1_200L
-        const val GAP_BETWEEN_LINES_MS = 3_500L
+    companion object {
+        private const val TAG = "SlipAway"
+        private const val ANSWER_PAUSE_MS = 1_200L
+
+        fun scriptLines(script: String) = script.lines().map { it.trim() }.filter { it.isNotEmpty() }
     }
 }

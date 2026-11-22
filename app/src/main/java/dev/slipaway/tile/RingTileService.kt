@@ -7,8 +7,8 @@ import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
 import dev.slipaway.MainActivity
-import dev.slipaway.Prefs
 import dev.slipaway.call.CallTrigger
+import dev.slipaway.data.Store
 
 /** Quick Settings tile: one tap rings after the delay chosen in the app; tap again to cancel. */
 class RingTileService : TileService() {
@@ -16,11 +16,11 @@ class RingTileService : TileService() {
     override fun onStartListening() = refresh()
 
     override fun onClick() {
-        val prefs = Prefs(this)
-        if (prefs.scheduledAt > 0L) {
+        val store = Store.get(this)
+        if (store.scheduled.value != null) {
             CallTrigger.cancel(this)
         } else {
-            val result = CallTrigger.schedule(this, prefs.delaySeconds)
+            val result = CallTrigger.schedule(this, store.settings.value.delaySeconds)
             if (result == CallTrigger.Result.NOT_ENABLED) openApp()
         }
         refresh()
@@ -28,15 +28,14 @@ class RingTileService : TileService() {
 
     private fun refresh() {
         val tile = qsTile ?: return
-        val prefs = Prefs(this)
-        val waiting = prefs.scheduledAt > 0L
+        val store = Store.get(this)
+        val waiting = store.scheduled.value != null
+        val delay = store.settings.value.delaySeconds
         tile.state = if (waiting) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
-        tile.subtitle = if (waiting) {
-            "Tap to cancel"
-        } else if (prefs.delaySeconds <= 0) {
-            "Ring now"
-        } else {
-            "Ring in ${Prefs.formatDelay(prefs.delaySeconds)}"
+        tile.subtitle = when {
+            waiting -> "Tap to cancel"
+            delay <= 0 -> "${store.selectedCaller.title} · now"
+            else -> "${store.selectedCaller.title} · ${Store.formatDelay(delay)}"
         }
         tile.updateTile()
     }

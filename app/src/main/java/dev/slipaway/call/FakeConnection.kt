@@ -6,7 +6,10 @@ import android.telecom.Connection
 import android.telecom.DisconnectCause
 
 /** One fake call, from ringing to hang-up. The system drives it through these callbacks. */
-class FakeConnection(private val voice: VoicePlayer) : Connection() {
+class FakeConnection(
+    private val voice: VoicePlayer,
+    private val ringTimeoutMs: Long,
+) : Connection() {
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -23,7 +26,7 @@ class FakeConnection(private val voice: VoicePlayer) : Connection() {
 
     fun ring() {
         setRinging()
-        handler.postDelayed(giveUp, RING_TIMEOUT_MS)
+        handler.postDelayed(giveUp, ringTimeoutMs)
     }
 
     override fun onAnswer() {
@@ -61,8 +64,6 @@ class FakeConnection(private val voice: VoicePlayer) : Connection() {
     }
 
     companion object {
-        private const val RING_TIMEOUT_MS = 45_000L
-
         /** The call in progress, if any. Stops a second fake call ringing over the first. */
         @Volatile
         var current: FakeConnection? = null

@@ -3,6 +3,8 @@
     <string name="app_name">Slip Away</string>
     <!-- Shown by the system in "Calling accounts" and possibly on the call screen. Keep it boring. -->
     <string name="call_account_label">Phone</string>
+    <!-- Where the source code lives. Forks: change to your own repository. -->
+    <string name="repo_url" translatable="false">https://github.com/ABHILESH1412/slipaway</string>
     <string name="tile_label">Slip Away</string>
     <string name="shortcut_10s">Call in 10 s</string>
     <string name="shortcut_1m">Call in 1 min</string>

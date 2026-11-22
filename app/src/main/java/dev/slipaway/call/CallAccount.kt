@@ -8,8 +8,8 @@ import android.telecom.PhoneAccountHandle
 import android.telecom.TelecomManager
 import android.telephony.TelephonyManager
 import android.util.Log
-import dev.slipaway.Prefs
 import dev.slipaway.R
+import dev.slipaway.data.Store
 
 /**
  * The "calling account" Slip Away registers with the system, like an internet-calling app does.
@@ -37,7 +37,7 @@ object CallAccount {
      * Google's dialer marks real SIM calls "via airtel" as well, so a fake call then reads the same.
      */
     fun label(context: Context): String =
-        Prefs(context).accountLabel.trim().ifEmpty { defaultLabel(context) }
+        Store.get(context).settings.value.accountLabel.trim().ifEmpty { defaultLabel(context) }
 
     fun defaultLabel(context: Context): String =
         context.getSystemService(TelephonyManager::class.java)?.simOperatorName?.trim()
@@ -68,16 +68,16 @@ object CallAccount {
      * last time it placed a call (see [CallTrigger.ringNow]).
      */
     fun isEnabled(context: Context): Boolean {
-        val prefs = Prefs(context)
+        val store = Store.get(context)
         return try {
             val on = telecom(context).getPhoneAccount(handle(context))?.isEnabled == true
-            prefs.accountOn = on
+            if (on != store.settings.value.accountOn) store.updateSettings { it.copy(accountOn = on) }
             on
         } catch (e: SecurityException) {
-            prefs.accountOn
+            store.settings.value.accountOn
         } catch (e: Exception) {
             Log.w(TAG, "Couldn't read the calling account", e)
-            prefs.accountOn
+            store.settings.value.accountOn
         }
     }
 
