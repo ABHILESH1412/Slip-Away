@@ -22,6 +22,8 @@ android {
         targetSdk = 37
         versionCode = releaseVersionCode
         versionName = releaseVersionName
+        // Where the app looks for updates (Settings -> Updates). Forks: change to your own "owner/repo".
+        buildConfigField("String", "UPDATE_REPO", "\"ABHILESH1412/Slip-Away\"")
     }
 
     // Release signing comes from environment variables (GitHub Actions secrets, see docs/releasing.md):
@@ -55,6 +57,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -68,5 +71,6 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.core)
+    implementation(libs.androidx.work.runtime)
     debugImplementation(libs.androidx.compose.ui.tooling)
 }

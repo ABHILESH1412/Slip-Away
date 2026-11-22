@@ -103,6 +103,14 @@ gh release create v0.2.1 --generate-notes
 
 The release's tag must point at a commit that contains `.github/workflows/android.yml`, or nothing gets built.
 
+## How phones get the update
+
+Installed copies of Slip Away check the latest GitHub release about twice a day, and when the app is opened. They download `slipaway-<version>.apk` and install it, unless the user has turned off **Settings → Updates → Automatic updates**. The updater finds the APK by its name, so keep the `slipaway-<version>.apk` naming that the workflow uses.
+
+Phones only pick up a release once its APK is attached. A release whose build is still running, or failed, is skipped until the APK is there.
+
+A fork that publishes its own releases should change `UPDATE_REPO` in `app/build.gradle.kts` to its own `owner/repo`.
+
 ## Installing on a phone
 
 On the phone, download `slipaway-<version>.apk` from the release and open it. The first time, Android asks you to allow installs from your browser.

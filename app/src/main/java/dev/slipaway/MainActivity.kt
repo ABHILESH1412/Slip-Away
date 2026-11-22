@@ -14,6 +14,8 @@ import dev.slipaway.data.Store
 import dev.slipaway.ui.SlipAwayApp
 import dev.slipaway.ui.SlipAwayTheme
 import dev.slipaway.ui.isDarkTheme
+import dev.slipaway.update.UpdateWorker
+import dev.slipaway.update.Updates
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,5 +40,16 @@ class MainActivity : ComponentActivity() {
                 SlipAwayApp(store)
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Updates.appVisible = true
+        UpdateWorker.checkSoon(this)
+    }
+
+    override fun onPause() {
+        Updates.appVisible = false
+        super.onPause()
     }
 }

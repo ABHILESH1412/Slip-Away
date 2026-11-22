@@ -5,6 +5,15 @@
          Optional: without it the call can arrive a little late. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
+    <!-- Automatic updates from GitHub releases (Settings -> Updates). Nothing else uses the internet. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Android 12+: install updates without a tap once Slip Away installed the previous one. -->
+    <uses-permission android:name="android.permission.UPDATE_PACKAGES_WITHOUT_USER_ACTION" />
+    <!-- Only for "update ready, tap to install" when Android insists on asking. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <queries>
         <!-- Needed to find the phone's text-to-speech engine for the spoken lines. -->
         <intent>
@@ -78,6 +87,11 @@
 
         <receiver
             android:name=".call.RingReceiver"
+            android:exported="false" />
+
+        <!-- Result of an update install from Android's package installer. -->
+        <receiver
+            android:name=".update.UpdateInstallReceiver"
             android:exported="false" />
     </application>
 </manifest>

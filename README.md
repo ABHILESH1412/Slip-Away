@@ -37,7 +37,7 @@ Most fake-call apps draw their own copy of a call screen. It never quite matches
 
 ## Privacy
 
-Slip Away has **no internet access**, no ads and no tracking. It asks for one permission: exact alarms, so timed calls arrive on time.
+Slip Away has no ads, no tracking and no account. Your callers and settings never leave your phone. The internet is used for one thing only: checking this project's GitHub releases for updates, and only while **Automatic updates** is on (see [Updates](#6-automatic-updates-on-by-default)).
 
 It **cannot** read your contacts, your call log or your real calls, and it **cannot** place calls. When you pick a contact, Android shares only that one contact's number. When you pick a recording, Android shares only that one file. Everything you set stays on your phone.
 
@@ -94,8 +94,27 @@ If the **Open calling accounts** button doesn't open anything, look for it yours
 
 - **Contacts permission:** not needed. The contact picker shares only the one number you choose.
 - **Storage permission:** not needed. The file picker shares only the one recording you choose.
-- **Microphone, location, notifications, internet:** never used.
+- **Microphone, location:** never used.
 - **Battery optimisation exemption:** not needed on most phones (see [Troubleshooting](#troubleshooting) if timed calls never arrive).
+
+### 6. Automatic updates (on by default)
+
+**What it is:** Slip Away checks this project's [GitHub releases](https://github.com/ABHILESH1412/Slip-Away/releases) about twice a day, and when you open the app. When there's a new version, it downloads and installs it.
+
+**Why it's necessary:** to keep the app working as phones and Android change, without you having to remember to check GitHub.
+
+**What it needs:**
+
+- **Internet access:** only for these checks and downloads. Turn **Settings → Updates → Automatic updates** off and Slip Away never connects to anything. **Check for updates** still works when you tap it.
+- **Install unknown apps:** Android's permission for an app to install updates. Allow it once when Slip Away asks, or under **Settings → Updates → Allow installing updates**.
+- **Notifications (Android 13+):** asked for when you turn updates on. Only used for "Update ready, tap to install" when Android wants you to confirm while the app is closed.
+
+**How it behaves:**
+
+- **Safety:** an update only installs if it's signed with the same key as the app you have. Android enforces this, so a tampered download can't replace Slip Away.
+- **Prompts:** on Android 12+, updates install without any tap. The exception is the very first one after installing from your browser, which Android asks you to confirm once.
+- **Calls:** it never installs while a call is waiting or ringing, because an update restarts the app. It tries again a little later.
+- **Builds from Android Studio** only report that an update exists. They're signed with a different key, so they can't install releases.
 
 ### Text-to-speech (for the spoken voice)
 
@@ -154,6 +173,7 @@ It's a normal call to your phone: answer, decline, mute, hold and hang up as usu
 | Shortcuts | Home-screen widget, Quick Settings tile, App icon shortcuts | Add the widget or tile; how to use the shortcuts |
 | Setup | Calling account, Exact timing | Whether each is done, with a tap to fix it |
 | Setup | Test call, Run setup again | Ring now; repeat the first-run setup |
+| Updates | Automatic updates, Allow installing updates, Check for updates | Turn self-updating on or off; see what's available |
 | About | Version, Source code, Report a problem, License, Open-source licenses | App info and links |
 
 ### Tips for a convincing exit
@@ -268,6 +288,7 @@ The phone's own dialer shows the call  ──► user answers ──► VoicePla
 | `.../call/FakeConnection.kt` | One call: ringing, answer, hold, hang-up, missed-call timeout |
 | `.../call/VoicePlayer.kt` | Spoken lines or a recording, through the earpiece |
 | `.../tile/RingTileService.kt` | Quick Settings tile |
+| `.../update/Updates.kt`, `UpdateWorker.kt` | Self-update from GitHub releases: check, download, verify, install |
 | `.../widget/RingWidget.kt` | Home-screen widget (layouts in `res/layout/widget_ring*.xml`) |
 | `.../TriggerActivity.kt` | Invisible activity behind the app-icon shortcuts |
 | `.../ui/App.kt` | Screen list, back stack and transitions |

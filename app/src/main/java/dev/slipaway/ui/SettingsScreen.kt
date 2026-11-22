@@ -1,6 +1,18 @@
 package dev.slipaway.ui
 
+import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.core.content.ContextCompat
+import dev.slipaway.update.Updates
+import kotlinx.coroutines.launch
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -60,9 +72,14 @@ fun SettingsScreen(store: Store, nav: Navigator) {
     val preview = rememberVoicePreview()
     val label = remember(settings.accountLabel) { CallAccount.label(context) }
     val repo = stringResource(R.string.repo_url)
+    val scope = rememberCoroutineScope()
+    val updateStatus by Updates.status.collectAsStateWithLifecycle()
+    var canInstallApps by remember { mutableStateOf(Updates.canInstallPackages(context)) }
+    val askNotifications = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
 
     LifecycleResumeEffect(Unit) {
         exactOk = CallTrigger.canUseExactAlarms(context)
+        canInstallApps = Updates.canInstallPackages(context)
         CallAccount.isEnabled(context)
         onPauseOrDispose { preview.stop() }
     }
@@ -207,6 +224,48 @@ fun SettingsScreen(store: Store, nav: Navigator) {
             )
         }
 
+        SectionHeader("Updates")
+        Panel(contentPadding = PaddingValues(0.dp)) {
+            SwitchRow(
+                title = "Automatic updates",
+                summary = "Checks GitHub about twice a day and installs new versions. This is the only " +
+                    "thing that uses the internet",
+                checked = settings.autoUpdate,
+                onChange = { on ->
+                    store.updateSettings { it.copy(autoUpdate = on) }
+                    if (on && needsNotificationPermission(context)) {
+                        askNotifications.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    }
+                },
+            )
+            if (Updates.canInstall && !canInstallApps) {
+                Divider()
+                SettingRow(
+                    title = "Allow installing updates",
+                    summary = "Android needs your OK once before Slip Away can install its own updates",
+                    onClick = {
+                        context.startActivitySafely(
+                            Intent(
+                                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                                Uri.fromParts("package", context.packageName, null),
+                            ),
+                        )
+                    },
+                    trailing = { StatusIcon(false) },
+                )
+            }
+            Divider()
+            SettingRow(
+                title = "Check for updates",
+                summary = Updates.describe(updateStatus),
+                onClick = {
+                    if (updateStatus !is Updates.Status.Checking && updateStatus !is Updates.Status.Downloading) {
+                        scope.launch { Updates.checkAndInstall(context.applicationContext) }
+                    }
+                },
+            )
+        }
+
         SectionHeader("About")
         Panel(contentPadding = PaddingValues(0.dp)) {
             SettingRow(title = "Version", summary = appVersion(context))
@@ -232,7 +291,8 @@ fun SettingsScreen(store: Store, nav: Navigator) {
         }
         Spacer(Modifier.height(16.dp))
         Text(
-            "No internet access, no ads, no tracking. Everything stays on your phone.",
+            "No ads, no tracking. Your callers and settings never leave your phone. The internet is only " +
+                "used to check GitHub for updates, and only while automatic updates are on.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 4.dp),
@@ -266,6 +326,10 @@ fun SettingsScreen(store: Store, nav: Navigator) {
         Dialog.NONE -> Unit
     }
 }
+
+private fun needsNotificationPermission(context: Context) =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+        ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
 
 @Composable
 private fun Divider() = HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
@@ -383,6 +447,7 @@ private val LIBRARIES = listOf(
     Library("Jetpack Compose", "Google", "Apache License 2.0", "https://developer.android.com/jetpack/androidx/releases/compose"),
     Library("Material 3 for Compose", "Google", "Apache License 2.0", "https://developer.android.com/jetpack/androidx/releases/compose-material3"),
     Library("Material icons", "Google", "Apache License 2.0", "https://fonts.google.com/icons"),
+    Library("WorkManager", "Google", "Apache License 2.0", "https://developer.android.com/jetpack/androidx/releases/work"),
 )
 
 @Composable

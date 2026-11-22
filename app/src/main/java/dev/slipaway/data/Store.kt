@@ -49,6 +49,9 @@ data class Settings(
     val speechPitch: Float = 1.0f,
     val pauseSeconds: Float = 3.5f,
     val onboardingDone: Boolean = false,
+    /** Check GitHub for new releases and install them. The only thing that uses the internet. */
+    val autoUpdate: Boolean = true,
+    val lastUpdateCheck: Long = 0L,
     /**
      * Whether the calling account is switched on, as last seen. Android 16 won't let an app read its own
      * account without the phone-numbers permission, so this is learned from placing a call.
@@ -147,6 +150,8 @@ class Store private constructor(context: Context) {
             pauseSeconds = sp.getFloat(K_PAUSE, 3.5f),
             // Someone who already got a call through has finished setup.
             onboardingDone = sp.getBoolean(K_ONBOARDING, accountOn),
+            autoUpdate = sp.getBoolean(K_AUTO_UPDATE, true),
+            lastUpdateCheck = sp.getLong(K_LAST_UPDATE_CHECK, 0L),
             accountOn = accountOn,
         )
     }
@@ -161,6 +166,8 @@ class Store private constructor(context: Context) {
         putFloat(K_PITCH, s.speechPitch)
         putFloat(K_PAUSE, s.pauseSeconds)
         putBoolean(K_ONBOARDING, s.onboardingDone)
+        putBoolean(K_AUTO_UPDATE, s.autoUpdate)
+        putLong(K_LAST_UPDATE_CHECK, s.lastUpdateCheck)
         putBoolean(K_ACCOUNT_ON, s.accountOn)
     }
 
@@ -225,6 +232,8 @@ class Store private constructor(context: Context) {
         private const val K_PAUSE = "pause_seconds"
         private const val K_ONBOARDING = "onboarding_done"
         private const val K_ACCOUNT_ON = "account_on"
+        private const val K_AUTO_UPDATE = "auto_update"
+        private const val K_LAST_UPDATE_CHECK = "last_update_check"
         private const val K_CALLERS = "callers"
         private const val K_SELECTED = "selected_caller"
         private const val K_SCHED_AT = "scheduled_at"

@@ -20,6 +20,7 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dev.slipaway.data.Store
 import dev.slipaway.widget.RingWidget
+import dev.slipaway.update.UpdateWorker
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 
@@ -78,6 +79,8 @@ fun SlipAwayApp(store: Store) {
     val selectedId by store.selectedId.collectAsStateWithLifecycle()
     val callers by store.callers.collectAsStateWithLifecycle()
     LaunchedEffect(settings.delaySeconds, selectedId, callers) { RingWidget.updateAll(context) }
+    // Automatic updates run in the background only while the switch is on.
+    LaunchedEffect(settings.autoUpdate) { UpdateWorker.schedule(context, settings.autoUpdate) }
 
     if (!settings.onboardingDone) {
         SetupScreen(store)
