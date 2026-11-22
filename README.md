@@ -45,7 +45,7 @@ It **cannot** read your contacts, your call log or your real calls, and it **can
 
 Slip Away needs **Android 10 or newer**.
 
-Until there is a store release, build it yourself (see [Working on the code](#working-on-the-code)) or install an APK someone has built for you. To install an APK, open it on your phone and allow installing from that source when Android asks.
+Download the latest `slipaway-<version>.apk` from [Releases](https://github.com/ABHILESH1412/Slip-Away/releases) on your phone and open it. Or build it yourself (see [Working on the code](#working-on-the-code)). To install an APK, open it on your phone and allow installing from that source when Android asks.
 
 ## Setup and settings
 
@@ -190,11 +190,11 @@ Contributions are welcome: bug fixes, support for more phones, translations, new
 1. **Fork** this repository on GitHub, then clone your fork:
 
    ```bash
-   git clone https://github.com/<your-username>/slipaway.git
-   cd slipaway
+   git clone https://github.com/<your-username>/Slip-Away.git
+   cd Slip-Away
    ```
 
-2. **Open it in Android Studio** (*File → Open* → the `slipaway` folder) and let Gradle sync. Android Studio creates `local.properties` with your SDK path.
+2. **Open it in Android Studio** (*File → Open* → the `Slip-Away` folder) and let Gradle sync. Android Studio creates `local.properties` with your SDK path.
 
    On the command line instead, tell Gradle where the SDK is:
 
@@ -303,7 +303,7 @@ Tested so far: **Motorola g85, Android 16, Google Phone app**. If you test on an
 ### Notes for contributors
 
 - **Changing the package name:** to publish your own build, change `applicationId` in `app/build.gradle.kts` **and** `android:targetPackage` in `app/src/main/res/xml/shortcuts.xml`. They must match, or the app-icon shortcuts break. Also point `repo_url` in `res/values/strings.xml` at your own repository.
-- **Release builds:** `./gradlew assembleRelease` signs with the debug key until you add your own keystore. That's fine for your own phone, but never publish a debug-signed build.
+- **Releases:** `scripts/release.sh` (or `minor` / `major`) publishes a GitHub release, and GitHub Actions builds and signs the APK. The version comes from the release tag. One-time setup and details are in [docs/releasing.md](docs/releasing.md). A local `./gradlew assembleRelease` signs with the debug key unless you set the signing variables, so never share a locally built release.
 - **Reading the calling account on Android 16:** Android 16 refuses `TelecomManager.getPhoneAccount()` unless the app holds `READ_PHONE_NUMBERS`, even for its own account. Slip Away avoids asking for that permission. Instead it learns whether the account is on from whether Android accepts a call (see `CallAccount.isEnabled` and `CallTrigger.ringNow`). Please keep the permission list short.
 - **Play Store:** apps that register calling accounts get extra review, so describe the purpose plainly in any store listing.
 
