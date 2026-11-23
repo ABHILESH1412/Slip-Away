@@ -73,6 +73,15 @@ class RingWidget : AppWidgetProvider() {
             }
             views.setContentDescription(android.R.id.background, action)
 
+            // While a call is waiting the button turns into a red hang-up button, so it's clear
+            // the tap worked and that the next tap cancels.
+            views.setInt(
+                R.id.widget_button, "setBackgroundResource",
+                if (waiting != null) R.drawable.widget_button_cancel_bg else R.drawable.widget_button_bg,
+            )
+            views.setViewVisibility(R.id.widget_icon, if (waiting != null) View.GONE else View.VISIBLE)
+            views.setViewVisibility(R.id.widget_icon_end, if (waiting != null) View.VISIBLE else View.GONE)
+
             if (!small) {
                 if (waiting != null) {
                     val left = (waiting.atMillis - System.currentTimeMillis()).coerceAtLeast(0)

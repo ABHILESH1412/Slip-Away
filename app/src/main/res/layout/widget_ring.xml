@@ -15,6 +15,7 @@
     android:paddingEnd="16dp">
 
     <FrameLayout
+        android:id="@+id/widget_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/widget_button_bg">
@@ -27,6 +28,14 @@
             android:importantForAccessibility="no"
             android:src="@drawable/ic_call"
             android:tint="@color/widget_on_button" />
+        <ImageView
+            android:id="@+id/widget_icon_end"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_call_end"
+            android:visibility="gone" />
     </FrameLayout>
 
     <LinearLayout

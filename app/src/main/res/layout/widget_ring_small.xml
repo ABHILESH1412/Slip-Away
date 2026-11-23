@@ -24,5 +24,13 @@
             android:importantForAccessibility="no"
             android:src="@drawable/ic_call"
             android:tint="@color/widget_on_button" />
+        <ImageView
+            android:id="@+id/widget_icon_end"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_call_end"
+            android:visibility="gone" />
     </FrameLayout>
 </FrameLayout>
