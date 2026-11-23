@@ -230,13 +230,15 @@ Contributions are welcome: bug fixes, support for more phones, translations, new
 
    The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. If Gradle can't find Java, point it at Android Studio's bundled JDK, for example `JAVA_HOME=/opt/android-studio/jbr ./gradlew assembleDebug` on Linux.
 
-4. **Install** on your phone (plugged in over USB):
+4. **Install** on your phone (plugged in over USB), into your main profile only:
 
    ```bash
-   ./gradlew installDebug
+   adb install --user 0 -r app/build/outputs/apk/debug/app-debug.apk
    ```
 
    Or press **Run ▶** in Android Studio.
+
+   > Plain `adb install` and `./gradlew installDebug` install into **every** profile on the phone, including work, private or "vault" profiles you can't see from your home screen. A debug copy left in one of those blocks the release APK later ("package conflicts with an existing package"), even after you uninstall it from your main profile. `--user 0` avoids that. To clear every profile: `adb uninstall io.github.abhilesh1412.slipaway`.
 
 5. **Create a branch** for your change:
 

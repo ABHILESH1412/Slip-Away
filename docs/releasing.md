@@ -117,6 +117,12 @@ On the phone, download `slipaway-<version>.apk` from the release and open it. Th
 
 **If you've been running a build from Android Studio or `./gradlew installDebug`:** that build is signed with your computer's debug key, and the release is signed with the release key. Android won't install one over the other. Uninstall the old one first. That removes your callers and setup, so you'll go through the one-time setup again. Later releases install over each other normally.
 
+If Android still says "package conflicts with an existing package" after you've uninstalled, the debug build is probably still installed in another profile on the phone. Work, private and "vault" profiles all count, and `adb install` puts apps into every profile. With the phone plugged in, this removes it from all of them:
+
+```bash
+adb uninstall io.github.abhilesh1412.slipaway
+```
+
 ## Building a release locally
 
 You rarely need to. Without the signing environment variables, the APK is signed with the debug key, which is fine for testing but never for sharing:
